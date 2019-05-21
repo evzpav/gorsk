@@ -3,10 +3,10 @@ package rbac_test
 import (
 	"testing"
 
-	"github.com/ribice/gorsk/pkg/utl/model"
+	"github.com/evzpav/gorsk/pkg/utl/model"
 
-	"github.com/ribice/gorsk/pkg/utl/mock"
-	"github.com/ribice/gorsk/pkg/utl/rbac"
+	"github.com/evzpav/gorsk/pkg/utl/mock"
+	"github.com/evzpav/gorsk/pkg/utl/rbac"
 
 	"github.com/labstack/echo"
 
@@ -16,13 +16,13 @@ import (
 func TestUser(t *testing.T) {
 	ctx := mock.EchoCtxWithKeys([]string{
 		"id", "company_id", "location_id", "username", "email", "role"},
-		9, 15, 52, "ribice", "ribice@gmail.com", gorsk.SuperAdminRole)
+		9, 15, 52, "evzpav", "evzpav@gmail.com", gorsk.SuperAdminRole)
 	wantUser := &gorsk.AuthUser{
 		ID:         9,
-		Username:   "ribice",
+		Username:   "evzpav",
 		CompanyID:  15,
 		LocationID: 52,
-		Email:      "ribice@gmail.com",
+		Email:      "evzpav@gmail.com",
 		Role:       gorsk.SuperAdminRole,
 	}
 	rbacSvc := rbac.New()

@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"strings"
 
-	"github.com/ribice/gorsk/pkg/utl/model"
-	"github.com/ribice/gorsk/pkg/utl/secure"
+	gorsk "github.com/evzpav/gorsk/pkg/utl/model"
+	"github.com/evzpav/gorsk/pkg/utl/secure"
 
 	"github.com/go-pg/pg"
 	"github.com/go-pg/pg/orm"
@@ -20,7 +21,7 @@ func main() {
 	INSERT INTO public.roles VALUES (120, 120, 'COMPANY_ADMIN');
 	INSERT INTO public.roles VALUES (130, 130, 'LOCATION_ADMIN');
 	INSERT INTO public.roles VALUES (200, 200, 'USER');`
-	var psn = `postgres://biadpozi:3_Czbl7jSjkUEWk--VP8QXMke-mFnczq@horton.elephantsql.com:5432/biadpozi`
+	var psn = os.Getenv("POSTGRES_URL")
 	queries := strings.Split(dbInsert, ";")
 
 	u, err := pg.ParseURL(psn)
