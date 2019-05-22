@@ -89,7 +89,7 @@ func (ls *LogService) Delete(c echo.Context, req int) (err error) {
 }
 
 // Update logging
-func (ls *LogService) Update(c echo.Context, req *trade.Update) (resp *gorsk.Trade, err error) {
+func (ls *LogService) Update(c echo.Context, req *gorsk.Trade) (resp *gorsk.Trade, err error) {
 	defer func(begin time.Time) {
 		ls.logger.Log(
 			c,

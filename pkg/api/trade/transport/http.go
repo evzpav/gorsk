@@ -85,15 +85,6 @@ func (h *HTTP) view(c echo.Context) error {
 }
 
 // User update request
-// swagger:model userUpdate
-type updateReq struct {
-	ID        int     `json:"-"`
-	FirstName *string `json:"first_name,omitempty" validate:"omitempty,min=2"`
-	LastName  *string `json:"last_name,omitempty" validate:"omitempty,min=2"`
-	Mobile    *string `json:"mobile,omitempty"`
-	Phone     *string `json:"phone,omitempty"`
-	Address   *string `json:"address,omitempty"`
-}
 
 func (h *HTTP) update(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
@@ -101,25 +92,18 @@ func (h *HTTP) update(c echo.Context) error {
 		return gorsk.ErrBadRequest
 	}
 
-	req := new(updateReq)
-	if err := c.Bind(req); err != nil {
+	var trade gorsk.Trade
+	if err := c.Bind(&trade); err != nil {
 		return err
 	}
 
-	usr, err := h.svc.Update(c, &trade.Update{
-		ID:        id,
-		FirstName: req.FirstName,
-		LastName:  req.LastName,
-		Mobile:    req.Mobile,
-		Phone:     req.Phone,
-		Address:   req.Address,
-	})
+	updatedTrade, err := h.svc.Update(c, &gorsk.Trade{ID: id, EntryPrice: trade.EntryPrice})
 
 	if err != nil {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, usr)
+	return c.JSON(http.StatusOK, updatedTrade)
 }
 
 func (h *HTTP) delete(c echo.Context) error {

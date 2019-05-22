@@ -37,31 +37,21 @@ func (t *Trade) Delete(c echo.Context, id int) error {
 	return t.tdb.Delete(t.db, trade)
 }
 
-// Update contains user's information used for updating
-type Update struct {
-	ID        int
-	FirstName *string
-	LastName  *string
-	Mobile    *string
-	Phone     *string
-	Address   *string
-}
-
 // Update updates user's contact information
-func (t *Trade) Update(c echo.Context, req *Update) (*gorsk.Trade, error) {
+func (t *Trade) Update(c echo.Context, req *gorsk.Trade) (*gorsk.Trade, error) {
 	if err := t.rbac.EnforceUser(c, req.ID); err != nil {
 		return nil, err
 	}
 
-	user, err := t.tdb.View(t.db, req.ID)
+	trade, err := t.tdb.View(t.db, req.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	structs.Merge(user, req)
-	if err := t.tdb.Update(t.db, user); err != nil {
+	structs.Merge(trade, req)
+	if err := t.tdb.Update(t.db, trade); err != nil {
 		return nil, err
 	}
 
-	return user, nil
+	return req, nil
 }

@@ -14,7 +14,7 @@ type Service interface {
 	List(echo.Context, *gorsk.Pagination) ([]gorsk.Trade, error)
 	View(echo.Context, int) (*gorsk.Trade, error)
 	Delete(echo.Context, int) error
-	Update(echo.Context, *Update) (*gorsk.Trade, error)
+	Update(echo.Context, *gorsk.Trade) (*gorsk.Trade, error)
 }
 
 // New creates new Trade application service
