@@ -42,6 +42,9 @@ import (
 	"github.com/evzpav/gorsk/pkg/api/password"
 	pl "github.com/evzpav/gorsk/pkg/api/password/logging"
 	pt "github.com/evzpav/gorsk/pkg/api/password/transport"
+	"github.com/evzpav/gorsk/pkg/api/trade"
+	tradeLogging "github.com/evzpav/gorsk/pkg/api/trade/logging"
+	tradeTransp "github.com/evzpav/gorsk/pkg/api/trade/transport"
 	"github.com/evzpav/gorsk/pkg/api/user"
 	ul "github.com/evzpav/gorsk/pkg/api/user/logging"
 	ut "github.com/evzpav/gorsk/pkg/api/user/transport"
@@ -76,6 +79,7 @@ func Start(cfg *config.Configuration) error {
 
 	ut.NewHTTP(ul.New(user.Initialize(db, rbac, sec), log), v1)
 	pt.NewHTTP(pl.New(password.Initialize(db, rbac, sec), log), v1)
+	tradeTransp.NewHTTP(tradeLogging.New(trade.Initialize(db, rbac, sec), log), v1)
 
 	server.Start(e, &server.Config{
 		Port:                cfg.Server.Port,
