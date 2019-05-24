@@ -2,15 +2,14 @@ INSERT INTO trades (
     pair, 
     exchange, 
     balance,
-    position_initial,
-    position_actual,
+    initial_position,
+    actual_position,
     entry_price,
-    stop_loss_initial,
-    stop_loss_actual,
+    initial_stop_loss,
+    actual_stop_loss,
     exit_price,
-    change_history,
     is_split) 
-    VALUES (
+VALUES (
     'BTC/USD',
     'Bitfinex',
     2000,
@@ -20,8 +19,5 @@ INSERT INTO trades (
     7900,
     7900,
     null,
-    '[
-        0: { "datetime": "23/05/19 12:00", "comment":"This is my comment 1","stop_loss_previouws": "10", "stop_loss_actual": "11", "split_siblings": []},
-        1: { "datetime": "24/05/19 13:00", "comment":"This is my comment 2", "stop_loss": "12", "split_siblings": []}
-    ]',
-    FALSE);
+    FALSE
+);

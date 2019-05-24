@@ -1,8 +1,6 @@
 package pgsql
 
 import (
-	"log"
-
 	gorsk "github.com/evzpav/gorsk/pkg/utl/model"
 	"github.com/go-pg/pg/orm"
 )
@@ -36,7 +34,6 @@ func (t *Trade) View(db orm.DB, id int) (*gorsk.Trade, error) {
 
 // Update updates trade info
 func (t *Trade) Update(db orm.DB, trade *gorsk.Trade) error {
-	log.Println("update trade:", trade)
 	return db.Update(trade)
 }
 

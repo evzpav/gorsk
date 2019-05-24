@@ -97,7 +97,7 @@ func (h *HTTP) update(c echo.Context) error {
 		return err
 	}
 
-	updatedTrade, err := h.svc.Update(c, &gorsk.Trade{ID: id, EntryPrice: trade.EntryPrice})
+	updatedTrade, err := h.svc.Update(c, &trade)
 
 	if err != nil {
 		return err
