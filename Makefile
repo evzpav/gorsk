@@ -21,7 +21,7 @@ gorsk-initial-migration:
 	go run cmd/migration/main.go
 
 migrate: 
-	docker run --rm -v ${PWD}/cmd/migration/:/migrations --network host migrate/migrate -path=/migrations/ -database ${POSTGRES_URL} goto 4
+	docker run --rm -v ${PWD}/cmd/migration/:/migrations --network host migrate/migrate -path=/migrations/ -database ${POSTGRES_URL} ${TYPE} 
 check-table:
 	docker exec -it postgres_gorsk psql -U postgres
 

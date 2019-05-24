@@ -21,7 +21,7 @@ INSERT INTO trades (
     7900,
     null,
     '[
-        { "datetime": "23/05/19 12:00", "comment":"This is my comment 1", "stop_loss": "10", "split_siblings": []},
-        { "datetime": "24/05/19 13:00", "comment":"This is my comment 2", "stop_loss": "12", "split_siblings": []}
+        0: { "datetime": "23/05/19 12:00", "comment":"This is my comment 1","stop_loss_previouws": "10", "stop_loss_actual": "11", "split_siblings": []},
+        1: { "datetime": "24/05/19 13:00", "comment":"This is my comment 2", "stop_loss": "12", "split_siblings": []}
     ]',
     FALSE);
