@@ -47,11 +47,14 @@ func (t *Trade) Update(c echo.Context, req *gorsk.Trade) (*gorsk.Trade, error) {
 	if err != nil {
 		return nil, err
 	}
+	req.ChangeHistory = trade.ChangeHistory
+	req.Atr = trade.Atr
 
 	structs.Merge(trade, req)
+
 	if err := t.tdb.Update(t.db, trade); err != nil {
 		return nil, err
 	}
 
-	return req, nil
+	return trade, nil
 }

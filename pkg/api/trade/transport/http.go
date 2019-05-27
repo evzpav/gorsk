@@ -1,6 +1,7 @@
 package transport
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
@@ -92,12 +93,14 @@ func (h *HTTP) update(c echo.Context) error {
 		return gorsk.ErrBadRequest
 	}
 
-	var trade gorsk.Trade
-	if err := c.Bind(&trade); err != nil {
+	var t gorsk.Trade
+	if err := c.Bind(&t); err != nil {
 		return err
 	}
 
-	updatedTrade, err := h.svc.Update(c, &trade)
+	t.ID = id
+	log.Printf("HTTP TRADE: %+v", t)
+	updatedTrade, err := h.svc.Update(c, &t)
 
 	if err != nil {
 		return err

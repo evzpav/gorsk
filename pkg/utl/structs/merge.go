@@ -1,8 +1,11 @@
 package structs
 
 import (
+	"encoding/json"
 	"reflect"
 )
+
+var jsonRawMessageType = reflect.TypeOf((*json.RawMessage)(nil))
 
 // Merge receives two structs, and merges them excluding fields with tag name: `structs`, value "-"
 func Merge(dst, src interface{}) {
@@ -22,6 +25,7 @@ func Merge(dst, src interface{}) {
 			v.Kind() != reflect.String &&
 			v.Kind() != reflect.Struct &&
 			v.Kind() != reflect.Ptr &&
+			v.Type() != jsonRawMessageType &&
 			v.Kind() != reflect.Slice {
 			continue
 		}

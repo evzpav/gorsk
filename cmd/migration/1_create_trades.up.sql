@@ -1,7 +1,8 @@
 CREATE TABLE trades (
     id SERIAL PRIMARY KEY,
+    id_parent_order INTEGER DEFAULT NULL,
     target_risk DECIMAL DEFAULT NULL,
-    atr JSON DEFAULT NULL,
+    atr JSON NULL DEFAULT '{}',
     balance DECIMAL NULL DEFAULT NULL,
     pair VARCHAR(20) NULL DEFAULT NULL,
     exchange VARCHAR(100) NULL DEFAULT NULL,
@@ -11,8 +12,10 @@ CREATE TABLE trades (
     total_position DECIMAL NULL DEFAULT NULL,
     entry_price DECIMAL NULL DEFAULT NULL,
     entry_timestamp TIMESTAMPTZ NULL,
+    initial_target DECIMAL NULL DEFAULT NULL,
+    actual_target DECIMAL NULL DEFAULT NULL,
     is_open BOOLEAN DEFAULT FALSE,
-    is_close BOOLEAN DEFAULT FALSE,
+    is_closed BOOLEAN DEFAULT FALSE,
     initial_stop_loss DECIMAL NULL DEFAULT NULL,
     actual_stop_loss DECIMAL NULL DEFAULT NULL,
     exit_price DECIMAL NULL DEFAULT NULL,
@@ -21,7 +24,6 @@ CREATE TABLE trades (
     actual_risk DECIMAL DEFAULT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
-    change_history JSON NULL,
+    change_history JSON NULL DEFAULT '{}',
     is_split BOOLEAN DEFAULT FALSE
-
 );

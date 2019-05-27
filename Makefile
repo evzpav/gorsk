@@ -25,6 +25,7 @@ migrate:
 check-table:
 	docker exec -it postgres_gorsk psql -U postgres
 
-start-db: run-postgres 
-	make gorsk-initial-migration
-	make migrate
+start-db:
+	POSTGRES_URL=${POSTGRES_URL} \
+	go run cmd/migration/main.go
+	make migrate TYPE=up
