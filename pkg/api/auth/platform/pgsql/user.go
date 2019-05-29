@@ -31,14 +31,9 @@ func (u *User) View(db *gorm.DB, id int) (*gorsk.User, error) {
 // FindByUsername queries for single user by username
 func (u *User) FindByUsername(db *gorm.DB, uname string) (*gorsk.User, error) {
 	var user = new(gorsk.User)
-	sql := `SELECT "user".*, "role"."id" AS "role__id", "role"."access_level" AS "role__access_level", "role"."name" AS "role__name" 
-	FROM "users" AS "user" LEFT JOIN "roles" AS "role" ON "role"."id" = "user"."role_id" 
-	WHERE ("user"."username" = ?)`
-	db.Preload("roles")
-	if err := db.Raw(sql, uname).Scan(&user).Error; err != nil {
+	if err := db.Preload("Role").Where(`users.username=(?)`, uname).Find(&user).Error; err != nil {
 		return nil, err
 	}
-	log.Printf("USER %+v", user)
 	return user, nil
 }
 

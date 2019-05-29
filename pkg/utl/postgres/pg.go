@@ -11,7 +11,6 @@ func New(psn string, timeout int, enableLog bool) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	db.LogMode(enableLog)
 	return db, nil
 }

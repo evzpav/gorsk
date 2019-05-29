@@ -1,5 +1,5 @@
 database:
-  log_queries: true
+  log_queries: false
   timeout_seconds: 5
   psn: postgres://gorsk:gorskpass@localhost:5433/gorskdb?sslmode=disable
 

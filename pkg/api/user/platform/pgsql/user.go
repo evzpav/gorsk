@@ -1,7 +1,6 @@
 package pgsql
 
 import (
-	"log"
 	"net/http"
 	"strings"
 
@@ -42,10 +41,7 @@ func (u *User) Create(db *gorm.DB, usr gorsk.User) (*gorsk.User, error) {
 // View returns single user by ID
 func (u *User) View(db *gorm.DB, id int) (*gorsk.User, error) {
 	var user = new(gorsk.User)
-	sql := `SELECT "user".*, "role"."id" AS "role__id", "role"."access_level" AS "role__access_level", "role"."name" AS "role__name" 
-	FROM "users" AS "user" LEFT JOIN "roles" AS "role" ON "role"."id" = "user"."role_id" 
-	WHERE ("user"."id" = ?)`
-	if err := db.Raw(sql, id).Scan(&user).Error; err != nil {
+	if err := db.Preload("Role").Where("users.id = (?)", id).Find(&user).Error; err != nil {
 		return nil, err
 	}
 	return user, nil
@@ -59,11 +55,12 @@ func (u *User) Update(db *gorm.DB, user *gorsk.User) error {
 // List returns list of all users retrievable for the current user, depending on role
 func (u *User) List(db *gorm.DB, qp *gorsk.ListQuery, p *gorsk.Pagination) ([]gorsk.User, error) {
 	var users []gorsk.User
-	q := db.Select("*").Limit(p.Limit).Offset(p.Offset).Order("users.id desc").Find(&users)
 	if qp != nil {
-		q.Where(qp.Query, qp.ID)
+		db.Where(qp.Query, qp.ID)
 	}
-
+	if err := db.Preload("Role").Limit(p.Limit).Offset(p.Offset).Find(&users).Error; err != nil {
+		return nil, err
+	}
 	return users, nil
 }
 
