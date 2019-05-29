@@ -1,11 +1,10 @@
 package user
 
 import (
-	"github.com/go-pg/pg"
-	"github.com/go-pg/pg/orm"
-	"github.com/labstack/echo"
 	"github.com/evzpav/gorsk/pkg/api/user/platform/pgsql"
-	"github.com/evzpav/gorsk/pkg/utl/model"
+	gorsk "github.com/evzpav/gorsk/pkg/utl/model"
+	"github.com/jinzhu/gorm"
+	"github.com/labstack/echo"
 )
 
 // Service represents user application interface
@@ -18,18 +17,18 @@ type Service interface {
 }
 
 // New creates new user application service
-func New(db *pg.DB, udb UDB, rbac RBAC, sec Securer) *User {
+func New(db *gorm.DB, udb UDB, rbac RBAC, sec Securer) *User {
 	return &User{db: db, udb: udb, rbac: rbac, sec: sec}
 }
 
 // Initialize initalizes User application service with defaults
-func Initialize(db *pg.DB, rbac RBAC, sec Securer) *User {
+func Initialize(db *gorm.DB, rbac RBAC, sec Securer) *User {
 	return New(db, pgsql.NewUser(), rbac, sec)
 }
 
 // User represents user application service
 type User struct {
-	db   *pg.DB
+	db   *gorm.DB
 	udb  UDB
 	rbac RBAC
 	sec  Securer
@@ -42,11 +41,11 @@ type Securer interface {
 
 // UDB represents user repository interface
 type UDB interface {
-	Create(orm.DB, gorsk.User) (*gorsk.User, error)
-	View(orm.DB, int) (*gorsk.User, error)
-	List(orm.DB, *gorsk.ListQuery, *gorsk.Pagination) ([]gorsk.User, error)
-	Update(orm.DB, *gorsk.User) error
-	Delete(orm.DB, *gorsk.User) error
+	Create(*gorm.DB, gorsk.User) (*gorsk.User, error)
+	View(*gorm.DB, int) (*gorsk.User, error)
+	List(*gorm.DB, *gorsk.ListQuery, *gorsk.Pagination) ([]gorsk.User, error)
+	Update(*gorm.DB, *gorsk.User) error
+	Delete(*gorm.DB, *gorsk.User) error
 }
 
 // RBAC represents role-based-access-control interface

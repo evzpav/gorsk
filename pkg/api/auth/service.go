@@ -1,15 +1,14 @@
 package auth
 
 import (
-	"github.com/go-pg/pg"
-	"github.com/go-pg/pg/orm"
-	"github.com/labstack/echo"
 	"github.com/evzpav/gorsk/pkg/api/auth/platform/pgsql"
-	"github.com/evzpav/gorsk/pkg/utl/model"
+	gorsk "github.com/evzpav/gorsk/pkg/utl/model"
+	"github.com/jinzhu/gorm"
+	"github.com/labstack/echo"
 )
 
 // New creates new iam service
-func New(db *pg.DB, udb UserDB, j TokenGenerator, sec Securer, rbac RBAC) *Auth {
+func New(db *gorm.DB, udb UserDB, j TokenGenerator, sec Securer, rbac RBAC) *Auth {
 	return &Auth{
 		db:   db,
 		udb:  udb,
@@ -20,7 +19,7 @@ func New(db *pg.DB, udb UserDB, j TokenGenerator, sec Securer, rbac RBAC) *Auth 
 }
 
 // Initialize initializes auth application service
-func Initialize(db *pg.DB, j TokenGenerator, sec Securer, rbac RBAC) *Auth {
+func Initialize(db *gorm.DB, j TokenGenerator, sec Securer, rbac RBAC) *Auth {
 	return New(db, pgsql.NewUser(), j, sec, rbac)
 }
 
@@ -33,7 +32,7 @@ type Service interface {
 
 // Auth represents auth application service
 type Auth struct {
-	db   *pg.DB
+	db   *gorm.DB
 	udb  UserDB
 	tg   TokenGenerator
 	sec  Securer
@@ -42,10 +41,10 @@ type Auth struct {
 
 // UserDB represents user repository interface
 type UserDB interface {
-	View(orm.DB, int) (*gorsk.User, error)
-	FindByUsername(orm.DB, string) (*gorsk.User, error)
-	FindByToken(orm.DB, string) (*gorsk.User, error)
-	Update(orm.DB, *gorsk.User) error
+	View(*gorm.DB, int) (*gorsk.User, error)
+	FindByUsername(*gorm.DB, string) (*gorsk.User, error)
+	FindByToken(*gorm.DB, string) (*gorsk.User, error)
+	Update(*gorm.DB, *gorsk.User) error
 }
 
 // TokenGenerator represents token generator (jwt) interface

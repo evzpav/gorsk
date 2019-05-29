@@ -3,7 +3,7 @@ package auth
 import (
 	"net/http"
 
-	"github.com/evzpav/gorsk/pkg/utl/model"
+	gorsk "github.com/evzpav/gorsk/pkg/utl/model"
 
 	"github.com/labstack/echo"
 )

@@ -3,8 +3,7 @@ package trade
 import (
 	"github.com/evzpav/gorsk/pkg/api/trade/platform/pgsql"
 	gorsk "github.com/evzpav/gorsk/pkg/utl/model"
-	"github.com/go-pg/pg"
-	"github.com/go-pg/pg/orm"
+	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 )
 
@@ -18,18 +17,18 @@ type Service interface {
 }
 
 // New creates new Trade application service
-func New(db *pg.DB, tdb TradeDB, rbac RBAC, sec Securer) *Trade {
+func New(db *gorm.DB, tdb TradeDB, rbac RBAC, sec Securer) *Trade {
 	return &Trade{db: db, tdb: tdb, rbac: rbac, sec: sec}
 }
 
 // Initialize initalizes Trade application service with defaultsUser
-func Initialize(db *pg.DB, rbac RBAC, sec Securer) *Trade {
+func Initialize(db *gorm.DB, rbac RBAC, sec Securer) *Trade {
 	return New(db, pgsql.NewTrade(), rbac, sec)
 }
 
 // Trade represents Trade application service
 type Trade struct {
-	db   *pg.DB
+	db   *gorm.DB
 	tdb  TradeDB
 	rbac RBAC
 	sec  Securer
@@ -42,11 +41,11 @@ type Securer interface {
 
 // TradeDB represents trade repository interface
 type TradeDB interface {
-	Create(orm.DB, gorsk.Trade) (*gorsk.Trade, error)
-	View(orm.DB, int) (*gorsk.Trade, error)
-	List(orm.DB, *gorsk.ListQuery, *gorsk.Pagination) ([]gorsk.Trade, error)
-	Update(orm.DB, *gorsk.Trade) error
-	Delete(orm.DB, *gorsk.Trade) error
+	Create(*gorm.DB, gorsk.Trade) (*gorsk.Trade, error)
+	View(*gorm.DB, int) (*gorsk.Trade, error)
+	List(*gorm.DB, *gorsk.ListQuery, *gorsk.Pagination) ([]gorsk.Trade, error)
+	Update(*gorm.DB, *gorsk.Trade) error
+	Delete(*gorm.DB, *gorsk.Trade) error
 }
 
 // RBAC represents role-based-access-control interface

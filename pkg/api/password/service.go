@@ -1,11 +1,10 @@
 package password
 
 import (
-	"github.com/go-pg/pg"
-	"github.com/go-pg/pg/orm"
-	"github.com/labstack/echo"
 	"github.com/evzpav/gorsk/pkg/api/password/platform/pgsql"
-	"github.com/evzpav/gorsk/pkg/utl/model"
+	gorsk "github.com/evzpav/gorsk/pkg/utl/model"
+	"github.com/jinzhu/gorm"
+	"github.com/labstack/echo"
 )
 
 // Service represents password application interface
@@ -14,7 +13,7 @@ type Service interface {
 }
 
 // New creates new password application service
-func New(db *pg.DB, udb UserDB, rbac RBAC, sec Securer) *Password {
+func New(db *gorm.DB, udb UserDB, rbac RBAC, sec Securer) *Password {
 	return &Password{
 		db:   db,
 		udb:  udb,
@@ -24,13 +23,13 @@ func New(db *pg.DB, udb UserDB, rbac RBAC, sec Securer) *Password {
 }
 
 // Initialize initalizes password application service with defaults
-func Initialize(db *pg.DB, rbac RBAC, sec Securer) *Password {
+func Initialize(db *gorm.DB, rbac RBAC, sec Securer) *Password {
 	return New(db, pgsql.NewUser(), rbac, sec)
 }
 
 // Password represents password application service
 type Password struct {
-	db   *pg.DB
+	db   *gorm.DB
 	udb  UserDB
 	rbac RBAC
 	sec  Securer
@@ -38,8 +37,8 @@ type Password struct {
 
 // UserDB represents user repository interface
 type UserDB interface {
-	View(orm.DB, int) (*gorsk.User, error)
-	Update(orm.DB, *gorsk.User) error
+	View(*gorm.DB, int) (*gorsk.User, error)
+	Update(*gorm.DB, *gorsk.User) error
 }
 
 // Securer represents security interface

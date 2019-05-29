@@ -1,8 +1,8 @@
 package pgsql
 
 import (
-	"github.com/go-pg/pg/orm"
-	"github.com/evzpav/gorsk/pkg/utl/model"
+	gorsk "github.com/evzpav/gorsk/pkg/utl/model"
+	"github.com/jinzhu/gorm"
 )
 
 // NewUser returns a new user database instance
@@ -14,16 +14,15 @@ func NewUser() *User {
 type User struct{}
 
 // View returns single user by ID
-func (u *User) View(db orm.DB, id int) (*gorsk.User, error) {
+func (u *User) View(db *gorm.DB, id int) (*gorsk.User, error) {
 	user := &gorsk.User{Base: gorsk.Base{ID: id}}
-	err := db.Select(user)
-	if err != nil {
+	if err := db.First(user).Error; err != nil {
 		return nil, err
 	}
 	return user, nil
 }
 
 // Update updates user's info
-func (u *User) Update(db orm.DB, user *gorsk.User) error {
-	return db.Update(user)
+func (u *User) Update(db *gorm.DB, user *gorsk.User) error {
+	return db.Save(user).Error
 }

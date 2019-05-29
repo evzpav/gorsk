@@ -2,10 +2,10 @@
 package user
 
 import (
-	"github.com/labstack/echo"
-	"github.com/evzpav/gorsk/pkg/utl/model"
+	gorsk "github.com/evzpav/gorsk/pkg/utl/model"
 	"github.com/evzpav/gorsk/pkg/utl/query"
 	"github.com/evzpav/gorsk/pkg/utl/structs"
+	"github.com/labstack/echo"
 )
 
 // Create creates a new user account
