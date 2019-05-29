@@ -1,5 +1,8 @@
 CREATE TABLE trades (
     id SERIAL PRIMARY KEY,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    deleted_at TIMESTAMPTZ DEFAULT NULL,
     id_parent_order INTEGER DEFAULT NULL,
     target_risk DECIMAL DEFAULT NULL,
     atr JSON NULL DEFAULT '{}',
@@ -22,8 +25,7 @@ CREATE TABLE trades (
     exit_timestamp TIMESTAMPTZ NULL,
 	initial_risk DECIMAL DEFAULT NULL,
     actual_risk DECIMAL DEFAULT NULL,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
     change_history JSON NULL DEFAULT '{}',
-    is_split BOOLEAN DEFAULT FALSE
+    is_child BOOLEAN DEFAULT FALSE,
+    is_parent BOOLEAN DEFAULT TRUE
 );

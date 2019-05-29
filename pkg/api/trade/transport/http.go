@@ -1,7 +1,6 @@
 package transport
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 

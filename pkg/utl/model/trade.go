@@ -6,7 +6,7 @@ import (
 )
 
 type Trade struct {
-	ID              int              `json:"id"`
+	Base
 	IDParentOrder   *int             `json:"id_parent_order"`
 	TargetRisk      *float64         `json:"target_risk"`
 	Atr             *json.RawMessage `json:"atr"`
@@ -29,8 +29,7 @@ type Trade struct {
 	ExitTimestamp   *time.Time       `json:"exit_timestamp"`
 	InitialRisk     *float64         `json:"initial_risk"`
 	ActualRisk      *float64         `json:"actual_risk"`
-	CreatedAt       *time.Time       `json:"created_at"`
-	UpdatedAt       *time.Time       `json:"updated_at"`
 	ChangeHistory   *json.RawMessage `json:"change_history"`
-	IsSplit         *bool            `json:"is_split"`
+	IsChild         *bool            `json:"is_child"`
+	IsParent        *bool            `json:"is_parent"`
 }
