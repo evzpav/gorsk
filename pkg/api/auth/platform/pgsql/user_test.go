@@ -3,7 +3,7 @@ package pgsql_test
 import (
 	"testing"
 
-	"github.com/evzpav/gorsk/pkg/utl/model"
+	gorsk "github.com/evzpav/gorsk/pkg/utl/model"
 
 	"github.com/evzpav/gorsk/pkg/utl/mock"
 
@@ -39,7 +39,7 @@ func TestView(t *testing.T) {
 				Base: gorsk.Base{
 					ID: 2,
 				},
-				Role: &gorsk.Role{
+				Role: gorsk.Role{
 					ID:          1,
 					AccessLevel: 1,
 					Name:        "SUPER_ADMIN",
@@ -106,7 +106,7 @@ func TestFindByUsername(t *testing.T) {
 				Base: gorsk.Base{
 					ID: 2,
 				},
-				Role: &gorsk.Role{
+				Role: gorsk.Role{
 					ID:          1,
 					AccessLevel: 1,
 					Name:        "SUPER_ADMIN",
@@ -171,7 +171,7 @@ func TestFindByToken(t *testing.T) {
 				Base: gorsk.Base{
 					ID: 1,
 				},
-				Role: &gorsk.Role{
+				Role: gorsk.Role{
 					ID:          1,
 					AccessLevel: 1,
 					Name:        "SUPER_ADMIN",
@@ -279,7 +279,7 @@ func TestUpdate(t *testing.T) {
 				tt.wantData.UpdatedAt = user.UpdatedAt
 				tt.wantData.CreatedAt = user.CreatedAt
 				tt.wantData.LastLogin = user.LastLogin
-				tt.wantData.DeletedAt = user.DeletedAt
+				// tt.wantData.DeletedAt = user.DeletedAt
 				assert.Equal(t, tt.wantData, user)
 			}
 		})

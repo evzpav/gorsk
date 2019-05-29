@@ -2,6 +2,8 @@
 package user
 
 import (
+	"log"
+
 	gorsk "github.com/evzpav/gorsk/pkg/utl/model"
 	"github.com/evzpav/gorsk/pkg/utl/query"
 	"github.com/evzpav/gorsk/pkg/utl/structs"

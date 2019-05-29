@@ -19,12 +19,12 @@ type User struct {
 
 	Active bool `json:"active"`
 
-	LastLogin          time.Time `json:"last_login,omitempty"`
-	LastPasswordChange time.Time `json:"last_password_change,omitempty"`
+	LastLogin          time.Time `json:"last_login"`
+	LastPasswordChange time.Time `json:"last_password_change"`
 
 	Token string `json:"-"`
 
-	Role *Role `json:"role,omitempty"`
+	Role Role `json:"role"`
 
 	RoleID     AccessRole `json:"-"`
 	CompanyID  int        `json:"company_id"`

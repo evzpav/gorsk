@@ -8,13 +8,13 @@ import (
 
 	"github.com/evzpav/gorsk/pkg/api/password"
 	"github.com/evzpav/gorsk/pkg/api/password/transport"
+	"github.com/jinzhu/gorm"
 
 	"github.com/evzpav/gorsk/pkg/utl/mock"
 	"github.com/evzpav/gorsk/pkg/utl/mock/mockdb"
-	"github.com/evzpav/gorsk/pkg/utl/model"
+	gorsk "github.com/evzpav/gorsk/pkg/utl/model"
 	"github.com/evzpav/gorsk/pkg/utl/server"
 
-	"github.com/go-pg/pg/orm"
 	"github.com/labstack/echo"
 	"github.com/stretchr/testify/assert"
 )
@@ -67,12 +67,12 @@ func TestChangePassword(t *testing.T) {
 			},
 			id: "1",
 			udb: &mockdb.User{
-				ViewFn: func(db orm.DB, id int) (*gorsk.User, error) {
+				ViewFn: func(db *gorm.DB, id int) (*gorsk.User, error) {
 					return &gorsk.User{
 						Password: "oldPassword",
 					}, nil
 				},
-				UpdateFn: func(db orm.DB, usr *gorsk.User) error {
+				UpdateFn: func(db *gorm.DB, usr *gorsk.User) error {
 					return nil
 				},
 			},

@@ -6,9 +6,9 @@ import (
 	"github.com/evzpav/gorsk/pkg/api/user"
 	"github.com/evzpav/gorsk/pkg/utl/mock"
 	"github.com/evzpav/gorsk/pkg/utl/mock/mockdb"
-	"github.com/evzpav/gorsk/pkg/utl/model"
+	gorsk "github.com/evzpav/gorsk/pkg/utl/model"
+	"github.com/jinzhu/gorm"
 
-	"github.com/go-pg/pg/orm"
 	"github.com/labstack/echo"
 
 	"github.com/stretchr/testify/assert"
@@ -52,7 +52,7 @@ func TestCreate(t *testing.T) {
 				Password:  "Thranduil8822",
 			}},
 			udb: &mockdb.User{
-				CreateFn: func(db orm.DB, u gorsk.User) (*gorsk.User, error) {
+				CreateFn: func(db *gorm.DB, u gorsk.User) (*gorsk.User, error) {
 					u.CreatedAt = mock.TestTime(2000)
 					u.UpdatedAt = mock.TestTime(2000)
 					u.Base.ID = 1
@@ -130,7 +130,7 @@ func TestView(t *testing.T) {
 					return nil
 				}},
 			udb: &mockdb.User{
-				ViewFn: func(db orm.DB, id int) (*gorsk.User, error) {
+				ViewFn: func(db *gorm.DB, id int) (*gorsk.User, error) {
 					if id == 1 {
 						return &gorsk.User{
 							Base: gorsk.Base{
@@ -202,7 +202,7 @@ func TestList(t *testing.T) {
 					}
 				}},
 			udb: &mockdb.User{
-				ListFn: func(orm.DB, *gorsk.ListQuery, *gorsk.Pagination) ([]gorsk.User, error) {
+				ListFn: func(*gorm.DB, *gorsk.ListQuery, *gorsk.Pagination) ([]gorsk.User, error) {
 					return []gorsk.User{
 						{
 							Base: gorsk.Base{
@@ -281,7 +281,7 @@ func TestDelete(t *testing.T) {
 			args:    args{id: 1},
 			wantErr: gorsk.ErrGeneric,
 			udb: &mockdb.User{
-				ViewFn: func(db orm.DB, id int) (*gorsk.User, error) {
+				ViewFn: func(db *gorm.DB, id int) (*gorsk.User, error) {
 					if id != 1 {
 						return nil, nil
 					}
@@ -293,7 +293,7 @@ func TestDelete(t *testing.T) {
 			name: "Fail on RBAC",
 			args: args{id: 1},
 			udb: &mockdb.User{
-				ViewFn: func(db orm.DB, id int) (*gorsk.User, error) {
+				ViewFn: func(db *gorm.DB, id int) (*gorsk.User, error) {
 					return &gorsk.User{
 						Base: gorsk.Base{
 							ID:        id,
@@ -302,7 +302,7 @@ func TestDelete(t *testing.T) {
 						},
 						FirstName: "John",
 						LastName:  "Doe",
-						Role: &gorsk.Role{
+						Role: gorsk.Role{
 							AccessLevel: gorsk.UserRole,
 						},
 					}, nil
@@ -318,7 +318,7 @@ func TestDelete(t *testing.T) {
 			name: "Success",
 			args: args{id: 1},
 			udb: &mockdb.User{
-				ViewFn: func(db orm.DB, id int) (*gorsk.User, error) {
+				ViewFn: func(db *gorm.DB, id int) (*gorsk.User, error) {
 					return &gorsk.User{
 						Base: gorsk.Base{
 							ID:        id,
@@ -327,14 +327,14 @@ func TestDelete(t *testing.T) {
 						},
 						FirstName: "John",
 						LastName:  "Doe",
-						Role: &gorsk.Role{
+						Role: gorsk.Role{
 							AccessLevel: gorsk.AdminRole,
 							ID:          2,
 							Name:        "Admin",
 						},
 					}, nil
 				},
-				DeleteFn: func(db orm.DB, usr *gorsk.User) error {
+				DeleteFn: func(db *gorm.DB, usr *gorsk.User) error {
 					return nil
 				},
 			},
@@ -390,7 +390,7 @@ func TestUpdate(t *testing.T) {
 				}},
 			wantErr: gorsk.ErrGeneric,
 			udb: &mockdb.User{
-				ViewFn: func(db orm.DB, id int) (*gorsk.User, error) {
+				ViewFn: func(db *gorm.DB, id int) (*gorsk.User, error) {
 					if id != 1 {
 						return nil, nil
 					}
@@ -409,7 +409,7 @@ func TestUpdate(t *testing.T) {
 				}},
 			wantErr: gorsk.ErrGeneric,
 			udb: &mockdb.User{
-				ViewFn: func(db orm.DB, id int) (*gorsk.User, error) {
+				ViewFn: func(db *gorm.DB, id int) (*gorsk.User, error) {
 					return &gorsk.User{
 						Base: gorsk.Base{
 							ID:        1,
@@ -427,7 +427,7 @@ func TestUpdate(t *testing.T) {
 						Email:      "golang@go.org",
 					}, nil
 				},
-				UpdateFn: func(db orm.DB, usr *gorsk.User) error {
+				UpdateFn: func(db *gorm.DB, usr *gorsk.User) error {
 					return gorsk.ErrGeneric
 				},
 			},
@@ -462,7 +462,7 @@ func TestUpdate(t *testing.T) {
 				Email:      "golang@go.org",
 			},
 			udb: &mockdb.User{
-				ViewFn: func(db orm.DB, id int) (*gorsk.User, error) {
+				ViewFn: func(db *gorm.DB, id int) (*gorsk.User, error) {
 					return &gorsk.User{
 						Base: gorsk.Base{
 							ID:        1,
@@ -480,7 +480,7 @@ func TestUpdate(t *testing.T) {
 						Email:      "golang@go.org",
 					}, nil
 				},
-				UpdateFn: func(db orm.DB, usr *gorsk.User) error {
+				UpdateFn: func(db *gorm.DB, usr *gorsk.User) error {
 					usr.UpdatedAt = mock.TestTime(2000)
 					return nil
 				},

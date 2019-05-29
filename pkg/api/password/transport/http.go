@@ -6,7 +6,7 @@ import (
 
 	"github.com/evzpav/gorsk/pkg/api/password"
 
-	"github.com/evzpav/gorsk/pkg/utl/model"
+	gorsk "github.com/evzpav/gorsk/pkg/utl/model"
 
 	"github.com/labstack/echo"
 )
@@ -60,7 +60,7 @@ var (
 // swagger:model pwChange
 type changeReq struct {
 	ID                 int    `json:"-"`
-	OldPassword        string `json:"old_password" validate:"required,min=8"`
+	OldPassword        string `json:"old_password" validate:"required"`
 	NewPassword        string `json:"new_password" validate:"required,min=8"`
 	NewPasswordConfirm string `json:"new_password_confirm" validate:"required"`
 }

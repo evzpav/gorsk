@@ -3,7 +3,7 @@ package pgsql_test
 import (
 	"testing"
 
-	"github.com/evzpav/gorsk/pkg/utl/model"
+	gorsk "github.com/evzpav/gorsk/pkg/utl/model"
 
 	"github.com/evzpav/gorsk/pkg/api/password/platform/pgsql"
 	"github.com/evzpav/gorsk/pkg/utl/mock"
@@ -141,7 +141,7 @@ func TestUpdate(t *testing.T) {
 				tt.wantData.UpdatedAt = user.UpdatedAt
 				tt.wantData.CreatedAt = user.CreatedAt
 				tt.wantData.LastLogin = user.LastLogin
-				tt.wantData.DeletedAt = user.DeletedAt
+				// tt.wantData.DeletedAt = user.DeletedAt
 				assert.Equal(t, tt.wantData, user)
 			}
 		})

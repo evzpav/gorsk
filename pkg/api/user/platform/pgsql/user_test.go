@@ -3,7 +3,7 @@ package pgsql_test
 import (
 	"testing"
 
-	"github.com/evzpav/gorsk/pkg/utl/model"
+	gorsk "github.com/evzpav/gorsk/pkg/utl/model"
 
 	"github.com/evzpav/gorsk/pkg/api/user/platform/pgsql"
 	"github.com/evzpav/gorsk/pkg/utl/mock"
@@ -131,7 +131,7 @@ func TestView(t *testing.T) {
 				Base: gorsk.Base{
 					ID: 2,
 				},
-				Role: &gorsk.Role{
+				Role: gorsk.Role{
 					ID:          1,
 					AccessLevel: 1,
 					Name:        "SUPER_ADMIN",
@@ -143,7 +143,7 @@ func TestView(t *testing.T) {
 	dbCon := mock.NewPGContainer(t)
 	defer dbCon.Shutdown()
 
-	db := mock.NewDB(t, dbCon, &gorsk.Role{}, &gorsk.User{})
+	db := mock.NewDB(t, dbCon, gorsk.Role{}, &gorsk.User{})
 
 	if err := mock.InsertMultiple(db, &gorsk.Role{
 		ID:          1,
@@ -240,7 +240,7 @@ func TestUpdate(t *testing.T) {
 				tt.wantData.UpdatedAt = user.UpdatedAt
 				tt.wantData.CreatedAt = user.CreatedAt
 				tt.wantData.LastLogin = user.LastLogin
-				tt.wantData.DeletedAt = user.DeletedAt
+				// tt.wantData.DeletedAt = user.DeletedAt
 				assert.Equal(t, tt.wantData, user)
 			}
 		})
@@ -285,7 +285,7 @@ func TestList(t *testing.T) {
 					Base: gorsk.Base{
 						ID: 2,
 					},
-					Role: &gorsk.Role{
+					Role: gorsk.Role{
 						ID:          1,
 						AccessLevel: 1,
 						Name:        "SUPER_ADMIN",
@@ -303,7 +303,7 @@ func TestList(t *testing.T) {
 					Base: gorsk.Base{
 						ID: 1,
 					},
-					Role: &gorsk.Role{
+					Role: gorsk.Role{
 						ID:          1,
 						AccessLevel: 1,
 						Name:        "SUPER_ADMIN",
@@ -354,8 +354,8 @@ func TestDelete(t *testing.T) {
 			name: "Success",
 			usr: &gorsk.User{
 				Base: gorsk.Base{
-					ID:        2,
-					DeletedAt: mock.TestTime(2018),
+					ID: 2,
+					// DeletedAt: mock.TestTime(2018),
 				},
 			},
 			wantData: &gorsk.User{

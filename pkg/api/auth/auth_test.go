@@ -7,9 +7,9 @@ import (
 	"github.com/evzpav/gorsk/pkg/api/auth"
 	"github.com/evzpav/gorsk/pkg/utl/mock"
 	"github.com/evzpav/gorsk/pkg/utl/mock/mockdb"
-	"github.com/evzpav/gorsk/pkg/utl/model"
+	gorsk "github.com/evzpav/gorsk/pkg/utl/model"
+	"github.com/jinzhu/gorm"
 
-	"github.com/go-pg/pg/orm"
 	"github.com/labstack/echo"
 
 	"github.com/stretchr/testify/assert"
@@ -34,7 +34,7 @@ func TestAuthenticate(t *testing.T) {
 			args:    args{user: "juzernejm"},
 			wantErr: true,
 			udb: &mockdb.User{
-				FindByUsernameFn: func(db orm.DB, user string) (*gorsk.User, error) {
+				FindByUsernameFn: func(db *gorm.DB, user string) (*gorsk.User, error) {
 					return nil, gorsk.ErrGeneric
 				},
 			},
@@ -44,7 +44,7 @@ func TestAuthenticate(t *testing.T) {
 			args:    args{user: "juzernejm", pass: "notHashedPassword"},
 			wantErr: true,
 			udb: &mockdb.User{
-				FindByUsernameFn: func(db orm.DB, user string) (*gorsk.User, error) {
+				FindByUsernameFn: func(db *gorm.DB, user string) (*gorsk.User, error) {
 					return &gorsk.User{
 						Username: user,
 					}, nil
@@ -61,7 +61,7 @@ func TestAuthenticate(t *testing.T) {
 			args:    args{user: "juzernejm", pass: "pass"},
 			wantErr: true,
 			udb: &mockdb.User{
-				FindByUsernameFn: func(db orm.DB, user string) (*gorsk.User, error) {
+				FindByUsernameFn: func(db *gorm.DB, user string) (*gorsk.User, error) {
 					return &gorsk.User{
 						Username: user,
 						Password: "pass",
@@ -80,7 +80,7 @@ func TestAuthenticate(t *testing.T) {
 			args:    args{user: "juzernejm", pass: "pass"},
 			wantErr: true,
 			udb: &mockdb.User{
-				FindByUsernameFn: func(db orm.DB, user string) (*gorsk.User, error) {
+				FindByUsernameFn: func(db *gorm.DB, user string) (*gorsk.User, error) {
 					return &gorsk.User{
 						Username: user,
 						Password: "pass",
@@ -104,14 +104,14 @@ func TestAuthenticate(t *testing.T) {
 			args:    args{user: "juzernejm", pass: "pass"},
 			wantErr: true,
 			udb: &mockdb.User{
-				FindByUsernameFn: func(db orm.DB, user string) (*gorsk.User, error) {
+				FindByUsernameFn: func(db *gorm.DB, user string) (*gorsk.User, error) {
 					return &gorsk.User{
 						Username: user,
 						Password: "pass",
 						Active:   true,
 					}, nil
 				},
-				UpdateFn: func(db orm.DB, u *gorsk.User) error {
+				UpdateFn: func(db *gorm.DB, u *gorsk.User) error {
 					return gorsk.ErrGeneric
 				},
 			},
@@ -133,14 +133,14 @@ func TestAuthenticate(t *testing.T) {
 			name: "Success",
 			args: args{user: "juzernejm", pass: "pass"},
 			udb: &mockdb.User{
-				FindByUsernameFn: func(db orm.DB, user string) (*gorsk.User, error) {
+				FindByUsernameFn: func(db *gorm.DB, user string) (*gorsk.User, error) {
 					return &gorsk.User{
 						Username: user,
 						Password: "password",
 						Active:   true,
 					}, nil
 				},
-				UpdateFn: func(db orm.DB, u *gorsk.User) error {
+				UpdateFn: func(db *gorm.DB, u *gorsk.User) error {
 					return nil
 				},
 			},
@@ -194,7 +194,7 @@ func TestRefresh(t *testing.T) {
 			args:    args{token: "refreshtoken"},
 			wantErr: true,
 			udb: &mockdb.User{
-				FindByTokenFn: func(db orm.DB, token string) (*gorsk.User, error) {
+				FindByTokenFn: func(db *gorm.DB, token string) (*gorsk.User, error) {
 					return nil, gorsk.ErrGeneric
 				},
 			},
@@ -204,7 +204,7 @@ func TestRefresh(t *testing.T) {
 			args:    args{token: "refreshtoken"},
 			wantErr: true,
 			udb: &mockdb.User{
-				FindByTokenFn: func(db orm.DB, token string) (*gorsk.User, error) {
+				FindByTokenFn: func(db *gorm.DB, token string) (*gorsk.User, error) {
 					return &gorsk.User{
 						Username: "username",
 						Password: "password",
@@ -223,7 +223,7 @@ func TestRefresh(t *testing.T) {
 			name: "Success",
 			args: args{token: "refreshtoken"},
 			udb: &mockdb.User{
-				FindByTokenFn: func(db orm.DB, token string) (*gorsk.User, error) {
+				FindByTokenFn: func(db *gorm.DB, token string) (*gorsk.User, error) {
 					return &gorsk.User{
 						Username: "username",
 						Password: "password",
@@ -269,7 +269,7 @@ func TestMe(t *testing.T) {
 				},
 			},
 			udb: &mockdb.User{
-				ViewFn: func(db orm.DB, id int) (*gorsk.User, error) {
+				ViewFn: func(db *gorm.DB, id int) (*gorsk.User, error) {
 					return &gorsk.User{
 						Base: gorsk.Base{
 							ID:        id,
@@ -278,7 +278,7 @@ func TestMe(t *testing.T) {
 						},
 						FirstName: "John",
 						LastName:  "Doe",
-						Role: &gorsk.Role{
+						Role: gorsk.Role{
 							AccessLevel: gorsk.UserRole,
 						},
 					}, nil
@@ -292,7 +292,7 @@ func TestMe(t *testing.T) {
 				},
 				FirstName: "John",
 				LastName:  "Doe",
-				Role: &gorsk.Role{
+				Role: gorsk.Role{
 					AccessLevel: gorsk.UserRole,
 				},
 			},

@@ -7,7 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/evzpav/gorsk/pkg/utl/model"
+	gorsk "github.com/evzpav/gorsk/pkg/utl/model"
+	"github.com/jinzhu/gorm"
 
 	"github.com/evzpav/gorsk/pkg/api/user"
 	"github.com/evzpav/gorsk/pkg/api/user/transport"
@@ -16,7 +17,6 @@ import (
 	"github.com/evzpav/gorsk/pkg/utl/mock/mockdb"
 	"github.com/evzpav/gorsk/pkg/utl/server"
 
-	"github.com/go-pg/pg/orm"
 	"github.com/labstack/echo"
 	"github.com/stretchr/testify/assert"
 )
@@ -71,7 +71,7 @@ func TestCreate(t *testing.T) {
 				},
 			},
 			udb: &mockdb.User{
-				CreateFn: func(db orm.DB, usr gorsk.User) (*gorsk.User, error) {
+				CreateFn: func(db *gorm.DB, usr gorsk.User) (*gorsk.User, error) {
 					usr.ID = 1
 					usr.CreatedAt = mock.TestTime(2018)
 					usr.UpdatedAt = mock.TestTime(2018)
@@ -173,7 +173,7 @@ func TestList(t *testing.T) {
 					}
 				}},
 			udb: &mockdb.User{
-				ListFn: func(db orm.DB, q *gorsk.ListQuery, p *gorsk.Pagination) ([]gorsk.User, error) {
+				ListFn: func(db *gorm.DB, q *gorsk.ListQuery, p *gorsk.Pagination) ([]gorsk.User, error) {
 					if p.Limit == 100 && p.Offset == 100 {
 						return []gorsk.User{
 							{
@@ -187,7 +187,7 @@ func TestList(t *testing.T) {
 								Email:      "john@mail.com",
 								CompanyID:  2,
 								LocationID: 3,
-								Role: &gorsk.Role{
+								Role: gorsk.Role{
 									ID:          1,
 									AccessLevel: 1,
 									Name:        "SUPER_ADMIN",
@@ -204,7 +204,7 @@ func TestList(t *testing.T) {
 								Email:      "joanna@mail.com",
 								CompanyID:  1,
 								LocationID: 2,
-								Role: &gorsk.Role{
+								Role: gorsk.Role{
 									ID:          2,
 									AccessLevel: 2,
 									Name:        "ADMIN",
@@ -229,7 +229,7 @@ func TestList(t *testing.T) {
 						Email:      "john@mail.com",
 						CompanyID:  2,
 						LocationID: 3,
-						Role: &gorsk.Role{
+						Role: gorsk.Role{
 							ID:          1,
 							AccessLevel: 1,
 							Name:        "SUPER_ADMIN",
@@ -246,7 +246,7 @@ func TestList(t *testing.T) {
 						Email:      "joanna@mail.com",
 						CompanyID:  1,
 						LocationID: 2,
-						Role: &gorsk.Role{
+						Role: gorsk.Role{
 							ID:          2,
 							AccessLevel: 2,
 							Name:        "ADMIN",
@@ -315,7 +315,7 @@ func TestView(t *testing.T) {
 				},
 			},
 			udb: &mockdb.User{
-				ViewFn: func(db orm.DB, id int) (*gorsk.User, error) {
+				ViewFn: func(db *gorm.DB, id int) (*gorsk.User, error) {
 					return &gorsk.User{
 						Base: gorsk.Base{
 							ID:        1,
@@ -410,7 +410,7 @@ func TestUpdate(t *testing.T) {
 				},
 			},
 			udb: &mockdb.User{
-				ViewFn: func(db orm.DB, id int) (*gorsk.User, error) {
+				ViewFn: func(db *gorm.DB, id int) (*gorsk.User, error) {
 					return &gorsk.User{
 						Base: gorsk.Base{
 							ID:        1,
@@ -424,7 +424,7 @@ func TestUpdate(t *testing.T) {
 						Phone:     "332223",
 					}, nil
 				},
-				UpdateFn: func(db orm.DB, usr *gorsk.User) error {
+				UpdateFn: func(db *gorm.DB, usr *gorsk.User) error {
 					usr.UpdatedAt = mock.TestTime(2010)
 					usr.Mobile = "991991"
 					return nil
@@ -494,9 +494,9 @@ func TestDelete(t *testing.T) {
 			name: "Fail on RBAC",
 			id:   `1`,
 			udb: &mockdb.User{
-				ViewFn: func(db orm.DB, id int) (*gorsk.User, error) {
+				ViewFn: func(db *gorm.DB, id int) (*gorsk.User, error) {
 					return &gorsk.User{
-						Role: &gorsk.Role{
+						Role: gorsk.Role{
 							AccessLevel: gorsk.CompanyAdminRole,
 						},
 					}, nil
@@ -513,14 +513,14 @@ func TestDelete(t *testing.T) {
 			name: "Success",
 			id:   `1`,
 			udb: &mockdb.User{
-				ViewFn: func(db orm.DB, id int) (*gorsk.User, error) {
+				ViewFn: func(db *gorm.DB, id int) (*gorsk.User, error) {
 					return &gorsk.User{
-						Role: &gorsk.Role{
+						Role: gorsk.Role{
 							AccessLevel: gorsk.CompanyAdminRole,
 						},
 					}, nil
 				},
-				DeleteFn: func(orm.DB, *gorsk.User) error {
+				DeleteFn: func(*gorm.DB, *gorsk.User) error {
 					return nil
 				},
 			},

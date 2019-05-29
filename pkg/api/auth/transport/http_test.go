@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 
 	"github.com/evzpav/gorsk/pkg/api/auth"
@@ -15,10 +16,9 @@ import (
 	"github.com/evzpav/gorsk/pkg/utl/middleware/jwt"
 	"github.com/evzpav/gorsk/pkg/utl/mock"
 	"github.com/evzpav/gorsk/pkg/utl/mock/mockdb"
-	"github.com/evzpav/gorsk/pkg/utl/model"
+	gorsk "github.com/evzpav/gorsk/pkg/utl/model"
 	"github.com/evzpav/gorsk/pkg/utl/server"
 
-	"github.com/go-pg/pg/orm"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -42,7 +42,7 @@ func TestLogin(t *testing.T) {
 			req:        `{"username":"juzernejm","password":"hunter123"}`,
 			wantStatus: http.StatusInternalServerError,
 			udb: &mockdb.User{
-				FindByUsernameFn: func(orm.DB, string) (*gorsk.User, error) {
+				FindByUsernameFn: func(*gorm.DB, string) (*gorsk.User, error) {
 					return nil, gorsk.ErrGeneric
 				},
 			},
@@ -52,13 +52,13 @@ func TestLogin(t *testing.T) {
 			req:        `{"username":"juzernejm","password":"hunter123"}`,
 			wantStatus: http.StatusOK,
 			udb: &mockdb.User{
-				FindByUsernameFn: func(orm.DB, string) (*gorsk.User, error) {
+				FindByUsernameFn: func(*gorm.DB, string) (*gorsk.User, error) {
 					return &gorsk.User{
 						Password: "hunter123",
 						Active:   true,
 					}, nil
 				},
-				UpdateFn: func(db orm.DB, u *gorsk.User) error {
+				UpdateFn: func(db *gorm.DB, u *gorsk.User) error {
 					return nil
 				},
 			},
@@ -118,7 +118,7 @@ func TestRefresh(t *testing.T) {
 			req:        "refreshtoken",
 			wantStatus: http.StatusInternalServerError,
 			udb: &mockdb.User{
-				FindByTokenFn: func(orm.DB, string) (*gorsk.User, error) {
+				FindByTokenFn: func(*gorm.DB, string) (*gorsk.User, error) {
 					return nil, gorsk.ErrGeneric
 				},
 			},
@@ -128,7 +128,7 @@ func TestRefresh(t *testing.T) {
 			req:        "refreshtoken",
 			wantStatus: http.StatusOK,
 			udb: &mockdb.User{
-				FindByTokenFn: func(orm.DB, string) (*gorsk.User, error) {
+				FindByTokenFn: func(*gorm.DB, string) (*gorsk.User, error) {
 					return &gorsk.User{
 						Username: "johndoe",
 						Active:   true,
@@ -181,7 +181,7 @@ func TestMe(t *testing.T) {
 			name:       "Fail on user view",
 			wantStatus: http.StatusInternalServerError,
 			udb: &mockdb.User{
-				ViewFn: func(orm.DB, int) (*gorsk.User, error) {
+				ViewFn: func(*gorm.DB, int) (*gorsk.User, error) {
 					return nil, gorsk.ErrGeneric
 				},
 			},
@@ -196,7 +196,7 @@ func TestMe(t *testing.T) {
 			name:       "Success",
 			wantStatus: http.StatusOK,
 			udb: &mockdb.User{
-				ViewFn: func(db orm.DB, i int) (*gorsk.User, error) {
+				ViewFn: func(db *gorm.DB, i int) (*gorsk.User, error) {
 					return &gorsk.User{
 						Base: gorsk.Base{
 							ID: i,

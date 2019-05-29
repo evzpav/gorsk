@@ -3,12 +3,12 @@ package gorsk
 import (
 	"time"
 
-	"github.com/go-pg/pg/orm"
+	"github.com/jinzhu/gorm"
 )
 
 // Base contains common fields for all tables
 type Base struct {
-	ID        int       `json:"id"; gorm:"primary_key"`
+	ID        int       `json:"id" gorm:"auto_increment;PRIMARY_KEY"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -20,7 +20,7 @@ type ListQuery struct {
 }
 
 // BeforeInsert hooks into insert operations, setting createdAt and updatedAt to current time
-func (b *Base) BeforeInsert(_ orm.DB) error {
+func (b *Base) BeforeInsert(_ *gorm.DB) error {
 	now := time.Now()
 	b.CreatedAt = now
 	b.UpdatedAt = now
@@ -28,7 +28,7 @@ func (b *Base) BeforeInsert(_ orm.DB) error {
 }
 
 // BeforeUpdate hooks into update operations, setting updatedAt to current time
-func (b *Base) BeforeUpdate(_ orm.DB) error {
+func (b *Base) BeforeUpdate(_ *gorm.DB) error {
 	b.UpdatedAt = time.Now()
 	return nil
 }
