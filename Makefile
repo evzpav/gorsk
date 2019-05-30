@@ -16,7 +16,7 @@ build-postgres-docker:
 run-postgres: build-postgres-docker
 	docker run -d -p 5433:5432 postgres_gorsk
 
-gorsk-initial-migration:
+initial-migration:
 	POSTGRES_URL=${POSTGRES_URL} \
 	go run cmd/migration/main.go
 
@@ -25,7 +25,8 @@ migrate:
 check-table:
 	docker exec -it postgres_gorsk psql -U postgres
 
-start-db:
-	POSTGRES_URL=${POSTGRES_URL} \
-	go run cmd/migration/main.go
+migrateup: 
 	make migrate TYPE=up
+
+migratedrop:
+	make migrate TYPE=drop

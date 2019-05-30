@@ -4,12 +4,12 @@ import (
 	"testing"
 
 	"github.com/evzpav/gorsk/pkg/api/password"
+	"github.com/jinzhu/gorm"
 
 	"github.com/evzpav/gorsk/pkg/utl/mock"
 	"github.com/evzpav/gorsk/pkg/utl/mock/mockdb"
-	"github.com/evzpav/gorsk/pkg/utl/model"
+	gorsk "github.com/evzpav/gorsk/pkg/utl/model"
 
-	"github.com/go-pg/pg/orm"
 	"github.com/labstack/echo"
 
 	"github.com/stretchr/testify/assert"
@@ -47,7 +47,7 @@ func TestChange(t *testing.T) {
 					return nil
 				}},
 			udb: &mockdb.User{
-				ViewFn: func(db orm.DB, id int) (*gorsk.User, error) {
+				ViewFn: func(db *gorm.DB, id int) (*gorsk.User, error) {
 					if id != 1 {
 						return nil, nil
 					}
@@ -64,7 +64,7 @@ func TestChange(t *testing.T) {
 				}},
 			wantErr: true,
 			udb: &mockdb.User{
-				ViewFn: func(db orm.DB, id int) (*gorsk.User, error) {
+				ViewFn: func(db *gorm.DB, id int) (*gorsk.User, error) {
 					return &gorsk.User{
 						Password: "HashedPassword",
 					}, nil
@@ -85,7 +85,7 @@ func TestChange(t *testing.T) {
 				}},
 			wantErr: true,
 			udb: &mockdb.User{
-				ViewFn: func(db orm.DB, id int) (*gorsk.User, error) {
+				ViewFn: func(db *gorm.DB, id int) (*gorsk.User, error) {
 					return &gorsk.User{
 						Password: "HashedPassword",
 					}, nil
@@ -108,12 +108,12 @@ func TestChange(t *testing.T) {
 					return nil
 				}},
 			udb: &mockdb.User{
-				ViewFn: func(db orm.DB, id int) (*gorsk.User, error) {
+				ViewFn: func(db *gorm.DB, id int) (*gorsk.User, error) {
 					return &gorsk.User{
 						Password: "$2a$10$udRBroNGBeOYwSWCVzf6Lulg98uAoRCIi4t75VZg84xgw6EJbFNsG",
 					}, nil
 				},
-				UpdateFn: func(orm.DB, *gorsk.User) error {
+				UpdateFn: func(*gorm.DB, *gorsk.User) error {
 					return nil
 				},
 			},

@@ -1,12 +1,14 @@
 package transport_test
 
 import (
+	"bytes"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	gorsk "github.com/evzpav/gorsk/pkg/utl/model"
+	"github.com/jinzhu/gorm"
 
 	"github.com/evzpav/gorsk/pkg/api/trade"
 	"github.com/evzpav/gorsk/pkg/api/trade/transport"
@@ -14,115 +16,112 @@ import (
 	"github.com/evzpav/gorsk/pkg/utl/mock"
 	"github.com/evzpav/gorsk/pkg/utl/mock/mockdb"
 	"github.com/evzpav/gorsk/pkg/utl/server"
-
-	"github.com/go-pg/pg/orm"
 	"github.com/labstack/echo"
 	"github.com/stretchr/testify/assert"
 )
 
-// func TestCreate(t *testing.T) {
-// 	cases := []struct {
-// 		name       string
-// 		req        string
-// 		wantStatus int
-// 		wantResp   *gorsk.User
-// 		udb        *mockdb.User
-// 		rbac       *mock.RBAC
-// 		sec        *mock.Secure
-// 	}{
-// 		{
-// 			name:       "Fail on validation",
-// 			req:        `{"first_name":"John","last_name":"Doe","username":"ju","password":"hunter123","password_confirm":"hunter123","email":"johndoe@gmail.com","company_id":1,"location_id":2,"role_id":300}`,
-// 			wantStatus: http.StatusBadRequest,
-// 		},
-// 		{
-// 			name:       "Fail on non-matching passwords",
-// 			req:        `{"first_name":"John","last_name":"Doe","username":"juzernejm","password":"hunter123","password_confirm":"hunter1234","email":"johndoe@gmail.com","company_id":1,"location_id":2,"role_id":300}`,
-// 			wantStatus: http.StatusBadRequest,
-// 		},
-// 		{
-// 			name: "Fail on invalid role",
-// 			req:  `{"first_name":"John","last_name":"Doe","username":"juzernejm","password":"hunter123","password_confirm":"hunter123","email":"johndoe@gmail.com","company_id":1,"location_id":2,"role_id":50}`,
-// 			rbac: &mock.RBAC{
-// 				AccountCreateFn: func(c echo.Context, roleID gorsk.AccessRole, companyID, locationID int) error {
-// 					return echo.ErrForbidden
-// 				},
-// 			},
-// 			wantStatus: http.StatusBadRequest,
-// 		},
-// 		{
-// 			name: "Fail on RBAC",
-// 			req:  `{"first_name":"John","last_name":"Doe","username":"juzernejm","password":"hunter123","password_confirm":"hunter123","email":"johndoe@gmail.com","company_id":1,"location_id":2,"role_id":200}`,
-// 			rbac: &mock.RBAC{
-// 				AccountCreateFn: func(c echo.Context, roleID gorsk.AccessRole, companyID, locationID int) error {
-// 					return echo.ErrForbidden
-// 				},
-// 			},
-// 			wantStatus: http.StatusForbidden,
-// 		},
+var entryPrice = 10.01
+var exitPrice = 12.01
 
-// 		{
-// 			name: "Success",
-// 			req:  `{"first_name":"John","last_name":"Doe","username":"juzernejm","password":"hunter123","password_confirm":"hunter123","email":"johndoe@gmail.com","company_id":1,"location_id":2,"role_id":200}`,
-// 			rbac: &mock.RBAC{
-// 				AccountCreateFn: func(c echo.Context, roleID gorsk.AccessRole, cUseror {
-// 					return nil
-// 				},
-// 			},
-// 			udb: &mockdb.User{
-// 				CreateFn: func(db orm.DB, usr gorsk.User) (*gorsk.User, error) {User
-// 					usr.ID = 1
-// 					usr.CreatedAt = mock.TestTime(2018)
-// 					usr.UpdatedAt = mock.TestTime(2018)
-// 					return &usr, nil
-// 				},
-// 			},
-// 			sec: &mock.Secure{
-// 				HashFn: func(string) string {
-// 					return "h4$h3d"
-// 				},
-// 			},
-// 			wantResp: &gorsk.User{
-// 				Base: gorsk.Base{
-// 					ID:        1,
-// 					CreatedAt: mock.TestTime(2018),
-// 					UpdatedAt: mock.TestTime(2018),
-// 				},
-// 				FirstName:  "John",
-// 				LastName:   "Doe",
-// 				Username:   "juzernejm",
-// 				Email:      "johndoe@gmail.com",
-// 				CompanyID:  1,
-// 				LocationID: 2,
-// 			},
-// 			wantStatus: http.StatusOK,
-// 		},
-// 	}
+func TestCreate(t *testing.T) {
 
-// 	for _, tt := range cases User
-// 		t.Run(tt.name, func(tUser
-// 			r := server.New()User
-// 			rg := r.Group("")
-// 			transport.NewHTTP(user.New(nil, tt.udb, tt.rbac, tt.sec), rg)
-// 			ts := httptest.NewServer(r)
-// 			defer ts.Close()
-// 			path := ts.URL + "/users"
-// 			res, err := http.Post(path, "application/json", bytes.NewBufferString(tt.req))
-// 			if err != nil {
-// 				t.Fatal(err)
-// 			}
-// 			defer res.Body.Close()
-// 			if tt.wantResp != nil {
-// 				response := new(gorsk.User)
-// 				if err := json.NewDecoder(res.Body).Decode(response); err != nil {
-// 					t.Fatal(err)
-// 				}
-// 				assert.Equal(t, tt.wantResp, response)
-// 			}
-// 			assert.Equal(t, tt.wantStatus, res.StatusCode)
-// 		})
-// 	}
-// }
+	cases := []struct {
+		name       string
+		req        string
+		wantStatus int
+		wantResp   *gorsk.Trade
+		udb        *mockdb.Trade
+		rbac       *mock.RBAC
+		sec        *mock.Secure
+	}{
+		{
+			name:       "Fail on validation",
+			req:        `{"first_name":"John","last_name":"Doe","username":"ju","password":"hunter123","password_confirm":"hunter123","email":"johndoe@gmail.com","company_id":1,"location_id":2,"role_id":300}`,
+			wantStatus: http.StatusBadRequest,
+		},
+		{
+			name:       "Fail on non-matching passwords",
+			req:        `{"first_name":"John","last_name":"Doe","username":"juzernejm","password":"hunter123","password_confirm":"hunter1234","email":"johndoe@gmail.com","company_id":1,"location_id":2,"role_id":300}`,
+			wantStatus: http.StatusBadRequest,
+		},
+		{
+			name: "Fail on invalid role",
+			req:  `{"first_name":"John","last_name":"Doe","username":"juzernejm","password":"hunter123","password_confirm":"hunter123","email":"johndoe@gmail.com","company_id":1,"location_id":2,"role_id":50}`,
+			rbac: &mock.RBAC{
+				AccountCreateFn: func(c echo.Context, roleID gorsk.AccessRole, companyID, locationID int) error {
+					return echo.ErrForbidden
+				},
+			},
+			wantStatus: http.StatusBadRequest,
+		},
+		{
+			name: "Fail on RBAC",
+			req:  `{"first_name":"John","last_name":"Doe","username":"juzernejm","password":"hunter123","password_confirm":"hunter123","email":"johndoe@gmail.com","company_id":1,"location_id":2,"role_id":200}`,
+			rbac: &mock.RBAC{
+				AccountCreateFn: func(c echo.Context, roleID gorsk.AccessRole, companyID, locationID int) error {
+					return echo.ErrForbidden
+				},
+			},
+			wantStatus: http.StatusForbidden,
+		},
+
+		{
+			name: "Success",
+			req:  `{"first_name":"John","last_name":"Doe","username":"juzernejm","password":"hunter123","password_confirm":"hunter123","email":"johndoe@gmail.com","company_id":1,"location_id":2,"role_id":200}`,
+			rbac: &mock.RBAC{
+				AccountCreateFn: func(c echo.Context, roleID gorsk.AccessRole, companyID, locationID int) error {
+					return nil
+				},
+			},
+			udb: &mockdb.Trade{
+				CreateFn: func(db *gorm.DB, usr gorsk.Trade) (*gorsk.Trade, error) {
+					usr.ID = 1
+					usr.CreatedAt = mock.TestTime(2018)
+					usr.UpdatedAt = mock.TestTime(2018)
+					return &usr, nil
+				},
+			},
+			sec: &mock.Secure{
+				HashFn: func(string) string {
+					return "h4$h3d"
+				},
+			},
+			wantResp: &gorsk.Trade{
+				Base: gorsk.Base{
+					ID:        1,
+					CreatedAt: mock.TestTime(2018),
+					UpdatedAt: mock.TestTime(2018),
+				},
+				EntryPrice: &entryPrice,
+			},
+			wantStatus: http.StatusOK,
+		},
+	}
+
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			r := server.New()
+			rg := r.Group("")
+			transport.NewHTTP(trade.New(nil, tt.udb, tt.rbac, tt.sec), rg)
+			ts := httptest.NewServer(r)
+			defer ts.Close()
+			path := ts.URL + "/trades"
+			res, err := http.Post(path, "application/json", bytes.NewBufferString(tt.req))
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer res.Body.Close()
+			if tt.wantResp != nil {
+				response := new(gorsk.Trade)
+				if err := json.NewDecoder(res.Body).Decode(response); err != nil {
+					t.Fatal(err)
+				}
+				assert.Equal(t, tt.wantResp, response)
+			}
+			assert.Equal(t, tt.wantStatus, res.StatusCode)
+		})
+	}
+}
 
 func TestList(t *testing.T) {
 	type listResponse struct {
@@ -172,12 +171,12 @@ func TestList(t *testing.T) {
 					}
 				}},
 			tdb: &mockdb.Trade{
-				ListFn: func(db orm.DB, q *gorsk.ListQuery, p *gorsk.Pagination) ([]gorsk.Trade, error) {
+				ListFn: func(db *gorm.DB, q *gorsk.ListQuery, p *gorsk.Pagination) ([]gorsk.Trade, error) {
 					if p.Limit == 100 && p.Offset == 100 {
 						return []gorsk.Trade{
 							{
-								EntryPrice: 10.02,
-								ExitPrice:  11.04,
+								EntryPrice: &entryPrice,
+								ExitPrice:  &exitPrice,
 							},
 						}, nil
 					}
@@ -188,8 +187,8 @@ func TestList(t *testing.T) {
 			wantResp: &listResponse{
 				Trades: []gorsk.Trade{
 					{
-						EntryPrice: 10.02,
-						ExitPrice:  11.04,
+						EntryPrice: &entryPrice,
+						ExitPrice:  &exitPrice,
 					},
 				}, Page: 1},
 		},
@@ -254,7 +253,7 @@ func TestList(t *testing.T) {
 // 				},
 // 			},
 // 			udb: &mockdb.User{
-// 				ViewFn: func(db orm.DB, id int) (*gorsk.User, error) {
+// 				ViewFn: func(db *gorm.DB, id int) (*gorsk.User, error) {
 // 					return &gorsk.User{
 // 						Base: gorsk.Base{
 // 							ID:        1,
@@ -349,7 +348,7 @@ func TestList(t *testing.T) {
 // 				},
 // 			},
 // 			udb: &mockdb.User{
-// 				ViewFn: func(db orm.DB, id int) (*gorsk.User, error) {
+// 				ViewFn: func(db *gorm.DB, id int) (*gorsk.User, error) {
 // 					return &gorsk.User{
 // 						Base: gorsk.Base{
 // 							ID:        1,
@@ -363,7 +362,7 @@ func TestList(t *testing.T) {
 // 						Phone:     "332223",
 // 					}, nil
 // 				},
-// 				UpdateFn: func(db orm.DB, usr *gorsk.User) error {
+// 				UpdateFn: func(db *gorm.DB, usr *gorsk.User) error {
 // 					usr.UpdatedAt = mock.TestTime(2010)
 // 					usr.Mobile = "991991"
 // 					return nil
@@ -433,7 +432,7 @@ func TestList(t *testing.T) {
 // 			name: "Fail on RBAC",
 // 			id:   `1`,
 // 			udb: &mockdb.User{
-// 				ViewFn: func(db orm.DB, id int) (*gorsk.User, error) {
+// 				ViewFn: func(db *gorm.DB, id int) (*gorsk.User, error) {
 // 					return &gorsk.User{
 // 						Role: &gorsk.Role{
 // 							AccessLevel: gorsk.CompanyAdminRole,
@@ -452,14 +451,14 @@ func TestList(t *testing.T) {
 // 			name: "Success",
 // 			id:   `1`,
 // 			udb: &mockdb.User{
-// 				ViewFn: func(db orm.DB, id int) (*gorsk.User, error) {
+// 				ViewFn: func(db *gorm.DB, id int) (*gorsk.User, error) {
 // 					return &gorsk.User{
 // 						Role: &gorsk.Role{
 // 							AccessLevel: gorsk.CompanyAdminRole,
 // 						},
 // 					}, nil
 // 				},
-// 				DeleteFn: func(orm.DB, *gorsk.User) error {
+// 				DeleteFn: func(*gorm.DB, *gorsk.User) error {
 // 					return nil
 // 				},
 // 			},

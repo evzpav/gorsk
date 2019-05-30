@@ -141,7 +141,6 @@ func TestUpdate(t *testing.T) {
 				tt.wantData.UpdatedAt = user.UpdatedAt
 				tt.wantData.CreatedAt = user.CreatedAt
 				tt.wantData.LastLogin = user.LastLogin
-				// tt.wantData.DeletedAt = user.DeletedAt
 				assert.Equal(t, tt.wantData, user)
 			}
 		})

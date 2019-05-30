@@ -143,7 +143,7 @@ func TestView(t *testing.T) {
 	dbCon := mock.NewPGContainer(t)
 	defer dbCon.Shutdown()
 
-	db := mock.NewDB(t, dbCon, gorsk.Role{}, &gorsk.User{})
+	db := mock.NewDB(t, dbCon, &gorsk.Role{}, &gorsk.User{})
 
 	if err := mock.InsertMultiple(db, &gorsk.Role{
 		ID:          1,
@@ -164,6 +164,8 @@ func TestView(t *testing.T) {
 				} else {
 					tt.wantData.CreatedAt = user.CreatedAt
 					tt.wantData.UpdatedAt = user.UpdatedAt
+					tt.wantData.LastPasswordChange = user.LastPasswordChange
+					tt.wantData.LastLogin = user.LastLogin
 					assert.Equal(t, tt.wantData, user)
 				}
 			}
@@ -240,7 +242,6 @@ func TestUpdate(t *testing.T) {
 				tt.wantData.UpdatedAt = user.UpdatedAt
 				tt.wantData.CreatedAt = user.CreatedAt
 				tt.wantData.LastLogin = user.LastLogin
-				// tt.wantData.DeletedAt = user.DeletedAt
 				assert.Equal(t, tt.wantData, user)
 			}
 		})
