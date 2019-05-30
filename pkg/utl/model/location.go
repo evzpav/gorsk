@@ -4,7 +4,7 @@ package gorsk
 type Location struct {
 	Base
 	Name    string `json:"name"`
-	Active  bool   `json:"active"`
+	Active  bool   `json:"active" gorm:"default:true"`
 	Address string `json:"address"`
 
 	CompanyID int `json:"company_id"`

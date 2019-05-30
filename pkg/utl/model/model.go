@@ -9,8 +9,8 @@ import (
 // Base contains common fields for all tables
 type Base struct {
 	ID        int       `json:"id" gorm:"auto_increment;PRIMARY_KEY"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	CreatedAt time.Time `json:"created_at" gorm:"default:now()"`
+	UpdatedAt time.Time `json:"updated_at" gorm:"default:now()"`
 }
 
 // ListQuery holds company/location data used for list db queries
