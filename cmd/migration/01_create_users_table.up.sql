@@ -1,0 +1,20 @@
+CREATE TABLE public.users (
+  	id SERIAL PRIMARY KEY,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    first_name text,
+    last_name text,
+    username text,
+    password text,
+    email text,
+    mobile text,
+    phone text,
+    address text,
+    active boolean,
+    last_login timestamp with time zone DEFAULT now(),
+    last_password_change timestamp with time zone DEFAULT now(),
+    token text,
+    role_id INTEGER,
+    company_id INTEGER,
+    location_id INTEGER
+);
